@@ -1,5 +1,6 @@
 package com.example.studentmanagement
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
@@ -12,7 +13,7 @@ import android.widget.TextView
 class PersonnelInfo : AppCompatActivity() {
 
     lateinit var dbManager: DBManager
-    lateinit var sqlite: SQLiteDatabase
+    lateinit var sqlitedb: SQLiteDatabase
 
     lateinit var tvName: TextView
     lateinit var tvGender: TextView
@@ -24,6 +25,7 @@ class PersonnelInfo : AppCompatActivity() {
     var age: Int =0
     lateinit var str_tel: String
 
+    @SuppressLint("Range")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_personnel_info)
@@ -34,22 +36,22 @@ class PersonnelInfo : AppCompatActivity() {
         tvTel = findViewById(R.id.edtTel)
 
         val intent = intent
-        str_name = intent.getSerializableExtra("intene_name").toString()
+        str_name = intent.getStringExtra("intent_name").toString()
 
         dbManager = DBManager(this, "personnelDB", null, 1)
-        sqlite = dbManager.readableDatabase
+        sqlitedb = dbManager.readableDatabase
 
-        var cursor: Cursor
-        cursor = sqlite.rawQuery("SELECT * FROM personnel WHERE name = '"+str_name+"';", null)
+        var cursor:Cursor
+        cursor = sqlitedb.rawQuery("SELECT * FROM personnel WHERE name = '"+str_name+"';", null)
 
         if(cursor.moveToNext()) {
             str_gender = cursor.getString((cursor.getColumnIndex("gender"))).toString()
-            age = cursor.getInt((cursor.getColumnIndex("age"))).toString()
+            age = cursor.getInt((cursor.getColumnIndex("age")))
             str_tel = cursor.getString((cursor.getColumnIndex("tel"))).toString()
         }
 
         cursor.close()
-        sqlite.close()
+        sqlitedb.close()
         dbManager.close()
 
         tvName.text = str_name
@@ -69,6 +71,7 @@ class PersonnelInfo : AppCompatActivity() {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 return true
+            }
 
             R.id.action_list -> {
                 val intent = Intent(this, PersonnelList::class.java)
@@ -80,20 +83,19 @@ class PersonnelInfo : AppCompatActivity() {
                 startActivity(intent)
                 return true
             }
-                R.id.action_remove -> {
-                }
+            R.id.action_remove -> {
 
-                    dbManager = DBManager(this, "personnelDB", null, 1)
-                    sqlite = dbManager.readableDatabase
-                }
+                dbManager = DBManager(this, "personnelDB", null, 1)
+                sqlitedb = dbManager.readableDatabase
 
-                    sqlite.execSQL("DELETE FROM personnel WHERE name = '"+str_name+"';")
-                    sqlitedb.close()
-                    dbManager.close()
+                sqlitedb.execSQL("DELETE FROM personnel WHERE name = '"+str_name + "';")
+                sqlitedb.close()
+                dbManager.close()
 
-                    val intent = Intent(this, PersonnelList::class.java)
-                    startActivity(intent)
-                    return true
+                val intent = Intent(this, PersonnelList::class.java)
+                startActivity(intent)
+                return true
+            }
         }
 
         return super.onOptionsItemSelected(item)

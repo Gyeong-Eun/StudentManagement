@@ -1,5 +1,6 @@
 package com.example.studentmanagement
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
@@ -17,11 +18,12 @@ class PersonnelList : AppCompatActivity() {
     lateinit var sqlitedb : SQLiteDatabase
     lateinit var layout: LinearLayout
 
+    @SuppressLint("Range")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_personnel_list)
 
-        dbManager = DBManager(this, "personnel", null, 1)
+        dbManager = DBManager(this, "personnelDB", null, 1)
         sqlitedb = dbManager.readableDatabase
 
         layout = findViewById(R.id.personnel)
@@ -32,9 +34,9 @@ class PersonnelList : AppCompatActivity() {
         var num: Int =0
         while (cursor.moveToNext()) {
 
-            var str_name = cursor.getString(cursor.getColumnIndex("name")).toString()
+            var str_name = cursor.getString((cursor.getColumnIndex("name"))).toString()
             var str_gender = cursor.getString((cursor.getColumnIndex("gender"))).toString()
-            var age = cursor.getInt((cursor.getColumnIndex("age"))).toString()
+            var age = cursor.getInt((cursor.getColumnIndex("age")))
             var str_tel = cursor.getString((cursor.getColumnIndex("tel"))).toString()
 
             var layout_item:LinearLayout = LinearLayout(this)
@@ -48,7 +50,7 @@ class PersonnelList : AppCompatActivity() {
             layout_item.addView(tvName)
 
             var tvGender: TextView = TextView(this)
-            tvGender.text = str_name
+            tvGender.text = str_gender
             layout_item.addView(tvGender)
 
             var tvAge: TextView = TextView(this)
@@ -83,7 +85,7 @@ class PersonnelList : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item?.itemId) {
             R.id.action_home -> {
-                val intent = Intent(this, PersonnelList::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 return true
             }

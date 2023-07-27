@@ -17,7 +17,7 @@
             android:exported="false" />
         <activity
             android:name=".PersonnelList"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".PersonnelInfo"
             android:exported="false" />
